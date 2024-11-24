@@ -1,0 +1,265 @@
+#ASS5
+P_greater_than_45 = 1 - punif(45,0,60) 
+P_greater_than_45 
+P_between_20_and_30 = punif(30,0,60) - punif(20,0,60) 
+P_between_20_and_30
+
+The time (in hours) required to repair a machine is an exponential distributed random
+variable with parameter λ = 1/2.
+(a) Find the value of density function at x = 3.
+(b) Plot the graph of exponential probability distribution for 0 ≤ x ≤ 5.
+(c) Find the probability that a repair time takes at most 3 hours.
+(d) Plot the graph of cumulative exponential probabilities for 0 ≤ x ≤ 5.
+(e) Simulate 1000 exponential distributed random numbers with λ = ½ and plot the
+simulated data.
+
+a = dexp(3, rate = 1/2) 
+val = seq(0, 5, by = 0.01)
+
+b = dexp(val, rate = 1/2) 
+plot(val, b, xlab="x", ylab="density plot", type="l")
+
+c = pexp(3, rate = 1/2) 
+val = seq(0, 5, by = 0.01) 
+
+d = pexp(val,rate=1/2) 
+plot(val, d, xlab="x", ylab="cumulative density", type="l") 
+
+e = rexp(1000,rate=1/2) 
+hist(e,breaks=30,probability=TRUE, main="Histogram") 
+lines(val,b)
+
+
+a = dgamma(3,shape=2,scale=1/3) 
+b = 1 - pgamma(1,shape=2,scale=1/3) 
+c = qgamma(0.7,shape=2,scale=1/3)
+
+
+
+
+
+
+
+
+#ASS6
+install.packages("pracma")
+library(pracma)
+#q1
+#i
+fun<-function(x,y){
+  return(2*(2*x+3*y)/5)
+}
+#check that it is a joint density function or not?
+val<-integral2(fun,xmin=0,xmax=1,ymin=0,ymax=1)$Q
+val
+#ii
+#marginal distribution g(x) at x = 1.
+g_x<-function(y){
+  return(fun(1,y))
+}
+x_marginal<-integrate(g_x,0,1)$value
+print(x_marginal)
+#iii
+# the marginal distribution h(y) at y = 0
+h_y<-function(x){
+  return(fun(x,0))
+}
+y_marginal<-integrate(h_y,0,1)$value
+print(y_marginal)
+#iv
+# the expected value of g(xy) = xy.
+func2<-function(x,y){
+  return(x*y*2*(2*x+3*y)/5)
+}
+e_xy=integral2(func2,xmin=0,xmax=1,ymin=0,ymax=1)$Q
+e_xy
+#q2
+#i
+#display the joint mass function in rectangular (matrix) form.
+funct<-function(x,y){
+  return((x+y)/30)
+}
+x=c(0:3)
+y=c(0:2)
+m1<-matrix(c(funct(0:3,0),funct(0:3,1),funct(0:3,2)),nrow=4,ncol=3,byrow=FALSE)
+m1
+#ii
+#check that it is joint mass function or not?
+sum(m1)
+#iii
+# Marginal distribution g(x) is the sum over the columns (y values)
+#the marginal distribution g(x) for x = 0,1,2,3
+g<-apply(m1,1,sum) #1 for rows
+g
+sum(g)
+#iv
+# Marginal distribution h(y) is the sum over the rows (x values)  
+#the marginal distribution h(y) for y = 012.
+h<-apply(m1,2,sum) #2for cols
+h
+sum(h)
+#v
+#the conditional probability at x = 0 given y = 1
+cp<-m1[1,2]/h[2] #m1 1,2 as 0at 1col and 1 and 2 col hy is 2 as 2nd pos
+cp
+#vi
+#E(x)E(y)E(xy)Var(x)Var(y)Cov(xy) and its correlation coeffcient
+var_x<-sum(x^2*g)-(sum(x*g))^2
+var_x
+var_y<-sum(y^2*h)-(sum(y*h))^2
+var_y
+funct2<-function(x,y){
+  return(x*y*(x+y)/30)
+}
+x=c(0:3)
+y=c(0:2)
+m2<-matrix(c(funct2(0:3,0),funct2(0:3,1),funct2(0:3,2)),nrow=4,ncol=,byrow=FALSE)
+m2
+Ex<-sum(x*g)
+Ex
+Ey<-sum(y*h)
+Ey
+Exy<-sum(m2)
+Exy
+covar<-Exy-Ex*Ey
+covar
+corr<-covar/sqrt(var_x*var_y)
+corr
+
+
+
+
+
+
+
+
+
+
+#ASS7
+#q1
+#Use the rt(ndf) function in r to investigate the t-distribution for n = 100 and df = n 1 and plot the histogram for the same.
+n=100
+df=n-1
+sample=rt(n,df)
+sample
+hist(sample,col='white',main='Histogram of T-distribution',xlab='T-values',ylab='Frequency')
+#q2
+# Use the rchisq(ndf) function in r to investigate the chi-square distribution with n = 100 and df=2,10,25
+x=rchisq(100,2)
+x
+hist(x,col="lightpink")
+y=rchisq(100,10)
+y
+hist(y,col="lightyellow")
+z=rchisq(100,25)
+z
+hist(z,col="lightblue")
+#q3
+# Generate a vector of 100 values between-6 and 6. Use the dt() function in r to nd the values of a
+#t-distribution given a random variable x and degrees of freedom 1,4,10,30. Using these values plot
+#the density function for students t-distribution with degrees of freedom 30. Also shows a comparison
+#of probability density functions having di erent degrees of freedom (1,4,10,30)
+x=seq(-6,6,length=100)
+x
+df=c(1,4,10,30)
+colors=c("green","yellow","pink","blue")
+plot(x,dt(x,df[4]),xlab="t-value",ylab="Density",col=colors[4])
+for(i in 1:3)
+  lines(x,dt(x,df[i]),col=colors[i])
+#q4
+#i
+#To find the 95th percentile of the F-distribution with (10,20) degrees of freedom.
+df=c(10,20)
+qf(0.95,df1=10,df2=20)
+#ii
+#To calculate the area under the curve for the interval [0,1.5] and the interval [1.5,inf) ofa F-curve with v1 = 10 and v2 = 20 (USE pf())
+s1=pf(1.5,df1=10,df2=20)
+s1
+s2=1-pf(1.5,df1=10,df2=20)
+s2
+#iii
+#To calculate the quantile for a given area (= probability) under the curve for a F-curve with v1 = 10 and v2 = 20 that corresponds to q = 0.25,0.50,0.75 and 0.999. (use the qf()
+qf(0.25,df1=10,df2=20)
+qf(0.5,df1=10,df2=20)
+qf(0.75,df1=10,df2=20)
+qf(0.999,df1=10,df2=20)
+#iv
+#To generate 1000 random values from the F-distribution with v1 = 10 and v2 = 20 (use rf())and plot a histogram.
+r=rf(1000,df1=10,df2=20)
+hist(r,col='white',main='Histogram of F-distribution',xlab='F-values',ylab='Frequency')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ASS8
+#q1
+#a
+data<-read.csv(file.choose())
+str(data)
+#b
+nrow(data)
+ncol(data)
+dim(data)
+head(data,10)
+#c
+pop_mean=mean(data$Wall.Thickness)
+pop_mean
+hist(data$Wall.Thickness)
+#d
+#Mark the mean computed in last step by using the function abline
+abline(v=pop_mean,col='lightyellow')
+
+#part2
+#a
+n=1000
+s1=c()
+for(i in 1:1000){
+  s1[i]=mean(sample(data$Wall.Thickness,10,replace=TRUE))
+}
+hist(s1)
+abline(v=mean(s1))
+#b
+s50=c()
+for(i in 1:1000){
+  s50[i]=mean(sample(data$Wall.Thickness,50,replace=TRUE))
+}
+hist(s1)
+abline(v=mean(s50))
+
+s500=c()
+for(i in 1:1000){
+  s500i=mean(sample(data$Wall.Thickness,500,replace=TRUE))
+}
+hist(s1)
+abline(v=mean(s500))
+
+s9000=c()
+for(i in 1:9000){
+  s500[i]=mean(sample(data$Wall.Thickness,9000,replace=TRUE))
+}
+hist(s1)
+abline(v=mean(s9000))
+
+#q2
+#Plot the scatter diagram and a regression line that will enable us to predict Cholesterol
+#level on age. Further, estimate the cholesterol level of a 60 year-old man
+y<-c(189,235,193,177,154,191,213,165,198,181)
+x<-c(58,69,43,39,63,52,47,31,74,36)
+reg=lm(y~x)
+plot(x,y,pch=16,abline(reg))
+z=predict(reg,data.frame(x=60))
+z
+#q3
+x<-c(145,173,158,141,167,159,154,167,145,153)
+y<-c(155,167,156,149,168,162,158,169,157,161)
+t.test(x,y,alternative="greater",mu=0,paired=TRUE,conf.level=0.95)
